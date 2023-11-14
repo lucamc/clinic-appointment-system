@@ -1,5 +1,6 @@
 package com.example.consultorioApp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,6 @@ public class Odontologo {
     //Attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "odontologo_id")
     private Long id;
 
     @NotEmpty(message = "El nombre no puede estar vacio")

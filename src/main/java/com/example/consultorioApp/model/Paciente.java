@@ -1,5 +1,6 @@
 package com.example.consultorioApp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,6 @@ public class Paciente {
     // Attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "paciente_id")
     private Long id;
 
     @NotEmpty(message = "El nombre no puede estar vacio")
@@ -28,25 +28,26 @@ public class Paciente {
     @NotEmpty(message = "El apellido no puede estar vacio")
     private String apellido;
 
-    @NotEmpty(message = "El domicilio no puede estar vacio")
-    private String domicilio;
-
     @NotNull(message = "El DNI no puede ser nulo")
     private String dni;
 
-    @Column(name ="fecha_de_alta")
-    @NotNull(message = "La fecha de alta no puede ser nula")
-    private LocalDate fechaDeAlta;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "domicilio_id", referencedColumnName = "id")
+    private Domicilio domicilio;
+
+    @Column(name ="fecha_ingreso")
+    @NotNull(message = "La fecha de ingreso no puede ser nula")
+    private LocalDate fechaIngreso;
 
     @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY)
     private Set<Turno> turnos = new HashSet<>();
 
     // Constructor
-    public Paciente(String nombre, String apellido, String domicilio,String dni, LocalDate fechaDeAlta) {
+    public Paciente(String nombre, String apellido, Domicilio domicilio,String dni, LocalDate fechaIngreso) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.domicilio = domicilio;
         this.dni = dni;
-        this.fechaDeAlta = fechaDeAlta;
+        this.fechaIngreso = fechaIngreso;
     }
 }
