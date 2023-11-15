@@ -1,18 +1,19 @@
 package com.example.consultorioApp.service;
 
+import com.example.consultorioApp.dto.OdontologoDTO;
 import com.example.consultorioApp.model.Odontologo;
 import java.util.List;
 import java.util.Optional;
 
 public interface IOdontologoService {
 
-    Odontologo registrarOdontologo(Odontologo odontologo);
+    OdontologoDTO registrarOdontologo(OdontologoDTO odontologoDTO);
 
-    Odontologo actualizarOdontologo(Odontologo odontologoModificado);
+    OdontologoDTO actualizarOdontologo(OdontologoDTO odontologoActualizadoDTO);
 
-    Optional<Odontologo> buscarOdontologo(Long id);
+    Optional<OdontologoDTO> buscarOdontologo(Long id);
 
-    List<Odontologo> listarOdontologos();
+    List<OdontologoDTO> listarOdontologos();
 
     void eliminarOdontologo(Long id);
 

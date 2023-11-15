@@ -1,18 +1,19 @@
 package com.example.consultorioApp.service;
 
+import com.example.consultorioApp.dto.PacienteDTO;
 import com.example.consultorioApp.model.Paciente;
 import java.util.List;
 import java.util.Optional;
 
 public interface IPacienteService {
 
-    Paciente registrarPaciente(Paciente paciente);
+    PacienteDTO registrarPaciente(PacienteDTO pacienteDTO);
 
-    Paciente actualizarPaciente(Paciente pacienteModificado);
+    PacienteDTO actualizarPaciente(PacienteDTO pacienteActualizadoDTO);
 
-    Optional<Paciente> buscarPaciente(Long id);
+    Optional<PacienteDTO> buscarPaciente(Long id);
 
-    List<Paciente> listarPacientes();
+    List<PacienteDTO> listarPacientes();
 
     void eliminarPaciente(Long id);
 }

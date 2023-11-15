@@ -1,5 +1,7 @@
 package com.example.consultorioApp.service.impl;
 
+import com.example.consultorioApp.dto.OdontologoDTO;
+import com.example.consultorioApp.exception.ResourceNotFoundException;
 import com.example.consultorioApp.model.Odontologo;
 import com.example.consultorioApp.repository.IOdontologoRepository;
 import com.example.consultorioApp.service.IOdontologoService;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OdontologoService implements IOdontologoService {
@@ -17,38 +20,72 @@ public class OdontologoService implements IOdontologoService {
     private final IOdontologoRepository odontologoRepository;
 
 
-    // Constructor de la clase OdontologoService
     public OdontologoService(IOdontologoRepository odontologoRepository) {
         this.odontologoRepository = odontologoRepository;
     }
 
-    // Metodo que agrega un odontologo
     @Override
-    public Odontologo registrarOdontologo(Odontologo odontologo) {
-        return odontologoRepository.save(odontologo);
+    public OdontologoDTO registrarOdontologo(OdontologoDTO odontologoDTO) {
+        Odontologo odontologo = convertirAEntidad(odontologoDTO);
+        Odontologo nuevoOdontologo = odontologoRepository.save(odontologo);
+        return convertirADTO(nuevoOdontologo);
+    }
+
+
+    @Override
+    public OdontologoDTO actualizarOdontologo(OdontologoDTO odontologoDTO) {
+        Odontologo odontologoExistente = odontologoRepository.findById(odontologoDTO.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado"));
+        odontologoExistente.setNombre(odontologoDTO.getNombre());
+        odontologoExistente.setApellido(odontologoDTO.getApellido());
+        odontologoExistente.setMatricula(odontologoDTO.getMatricula());
+        odontologoRepository.save(odontologoExistente);
+        return convertirADTO(odontologoExistente);
+    }
+
+
+    @Override
+    public Optional<OdontologoDTO> buscarOdontologo(Long id) {
+        Optional<Odontologo> odontologo = Optional.ofNullable(odontologoRepository.findById(id).orElseThrow(()
+                -> new ResourceNotFoundException("Odontologo no encontrado")));
+        return odontologo.map(this::convertirADTO);
     }
 
     @Override
-    public Odontologo actualizarOdontologo(Odontologo odontologoModificado) {
-        return odontologoRepository.save(odontologoModificado);
+    public List<OdontologoDTO> listarOdontologos() {
+        List<Odontologo> odontologos = odontologoRepository.findAll();
+        return odontologos.stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
     }
 
-    // Metodo que busca un odontologo por id
-    @Override
-    public Optional<Odontologo> buscarOdontologo(Long id) {
-        return odontologoRepository.findById(id);
-    }
-
-    // Metodo que lista todos los odontologos
-    @Override
-    public List<Odontologo> listarOdontologos() {
-        return odontologoRepository.findAll();
-    }
-
-    // Metodo que elimina un odontologo por id
     @Override
     public void eliminarOdontologo(Long id) {
+        odontologoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Odontologo no encontrado"));
         odontologoRepository.deleteById(id);
     }
 
+
+    // Método para convertir una entidad a DTO
+    private OdontologoDTO convertirADTO(Odontologo odontologo) {
+        OdontologoDTO odontologoDTO = new OdontologoDTO();
+        odontologoDTO.setId(odontologo.getId());
+        odontologoDTO.setNombre(odontologo.getNombre());
+        odontologoDTO.setApellido(odontologo.getApellido());
+        odontologoDTO.setMatricula(odontologo.getMatricula());
+        return odontologoDTO;
+    }
+
+    // Método para convertir un DTO a una entidad
+    private Odontologo convertirAEntidad(OdontologoDTO odontologoDTO) {
+        Odontologo odontologo = new Odontologo();
+        // No asignamos el ID aquí si estamos creando una nueva entidad, solo en actualizaciones.
+        odontologo.setNombre(odontologoDTO.getNombre());
+        odontologo.setApellido(odontologoDTO.getApellido());
+        odontologo.setMatricula(odontologoDTO.getMatricula());
+        return odontologo;
+    }
+
 }
+
