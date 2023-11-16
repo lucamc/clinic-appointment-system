@@ -1,7 +1,5 @@
 package com.example.consultorioApp.service;
 
-import com.example.consultorioApp.dto.OdontologoDTO;
-import com.example.consultorioApp.model.Odontologo;
 import java.util.List;
 import java.util.Optional;
 

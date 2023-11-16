@@ -1,7 +1,5 @@
 package com.example.consultorioApp.service;
 
-import com.example.consultorioApp.dto.PacienteDTO;
-import com.example.consultorioApp.model.Paciente;
 import java.util.List;
 import java.util.Optional;
 

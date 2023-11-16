@@ -1,7 +1,5 @@
 package com.example.consultorioApp.controller;
 
-import com.example.consultorioApp.dto.OdontologoDTO;
-import com.example.consultorioApp.model.Odontologo;
 import com.example.consultorioApp.service.impl.OdontologoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

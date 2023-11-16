@@ -1,8 +1,6 @@
 package com.example.consultorioApp.service.impl;
 
 
-import com.example.consultorioApp.dto.DomicilioDTO;
-import com.example.consultorioApp.dto.PacienteDTO;
 import com.example.consultorioApp.exception.ResourceNotFoundException;
 import com.example.consultorioApp.model.Paciente;
 import com.example.consultorioApp.repository.IPacienteRepository;

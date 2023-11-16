@@ -21,13 +21,10 @@ public class Odontologo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "El nombre no puede estar vacio")
     private String nombre;
 
-    @NotEmpty(message = "El apellido no puede estar vacio")
     private String apellido;
 
-    @NotEmpty(message = "La matricula no puede estar vacio")
     private String matricula;
 
     @OneToMany(mappedBy = "odontologo", fetch = FetchType.LAZY)

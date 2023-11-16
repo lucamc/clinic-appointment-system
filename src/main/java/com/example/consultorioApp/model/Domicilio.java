@@ -17,13 +17,10 @@ public class Domicilio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "La calle no puede estar vacia")
     private String calle;
 
-    @NotEmpty(message = "El numero no puede estar vacio")
     private String numero;
 
-    @NotEmpty(message = "La localidad no puede estar vacia")
     private String localidad;
 
     // Constructor

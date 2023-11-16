@@ -23,16 +23,13 @@ public class Turno {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "odontologo_id", nullable = false)
-    @NotNull(message = "Debe asignarse un odontólogo al turno")
     private Odontologo odontologo;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "paciente_id", nullable = false)
-    @NotNull(message = "Debe asignarse un paciente al turno")
     private Paciente paciente;
 
     @Column(name = "fecha_hora", nullable = false)
-    @NotNull(message = "La fecha y hora del turno no puede ser nulas")
     private LocalDateTime fechaHora;
 
     public Turno(Odontologo odontologo, Paciente paciente, LocalDateTime fechaHora) {
