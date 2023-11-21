@@ -3,20 +3,17 @@ package com.example.consultorioApp.service.impl;
 import com.example.consultorioApp.dto.request.odontologo.OdontologoEntradaDTO;
 import com.example.consultorioApp.dto.request.update.OdontologoActualizadoEntradaDTO;
 import com.example.consultorioApp.dto.response.odontologo.OdontologoSalidaDTO;
+import com.example.consultorioApp.exception.BadRequestException;
 import com.example.consultorioApp.exception.ResourceNotFoundException;
 import com.example.consultorioApp.model.Odontologo;
-import com.example.consultorioApp.model.Paciente;
 import com.example.consultorioApp.repository.IOdontologoRepository;
 import com.example.consultorioApp.service.IOdontologoService;
-import com.sun.jdi.PrimitiveValue;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class OdontologoService implements IOdontologoService {
@@ -40,11 +37,10 @@ public class OdontologoService implements IOdontologoService {
     }
 
     @Override
-    public OdontologoSalidaDTO actualizarOdontologo(OdontologoActualizadoEntradaDTO odontologo) {
+    public OdontologoSalidaDTO actualizarOdontologo(OdontologoActualizadoEntradaDTO odontologo) throws BadRequestException {
       // Busca odontologo y lanza una exepcion si no lo encuentra
         Odontologo odontologoActualizar = odontologoRepository.findById(odontologo.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontro el odontologo con id: " + odontologo.getId()));
-
+                .orElseThrow(() -> new BadRequestException("No se encontro el odontologo con id: " + odontologo.getId()));
         // Actualiza y guarda el odontologo
         Odontologo odontologoActualizado = dtoActualizadoAEntidad(odontologo);
         odontologoRepository.save(odontologoActualizado);
@@ -54,9 +50,9 @@ public class OdontologoService implements IOdontologoService {
     }
 
     @Override
-    public OdontologoSalidaDTO buscarOdontologo(Long id) {
+    public OdontologoSalidaDTO buscarOdontologo(Long id) throws BadRequestException {
         Odontologo odontologo = odontologoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontro el odontologo con id: " + id));
+                .orElseThrow(() -> new BadRequestException("No se encontro el odontologo con id: " + id));
         return entidadAdtoSalida(odontologo);
     }
 
@@ -67,7 +63,7 @@ public class OdontologoService implements IOdontologoService {
     }
 
     @Override
-    public void eliminarOdontologo(Long id) {
+    public void eliminarOdontologo(Long id) throws ResourceNotFoundException {
         Optional<Odontologo> odontologo = odontologoRepository.findById(id);
         if (odontologo.isEmpty()) {
             throw new ResourceNotFoundException("No se encontro el odontologo con id: " + id);
@@ -89,10 +85,7 @@ public class OdontologoService implements IOdontologoService {
         return modelMapper.map(odontologo, Odontologo.class);
     }
 
-    // Método para convertir OdontologoSalidaDTO a entidad
-    public Odontologo convertirADTOAEntidad(OdontologoSalidaDTO odontologoDTO) {
-        return modelMapper.map(odontologoDTO, Odontologo.class);
-    }
+
 
 }
 

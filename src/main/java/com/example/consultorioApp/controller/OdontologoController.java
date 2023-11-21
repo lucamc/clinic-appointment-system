@@ -3,6 +3,8 @@ package com.example.consultorioApp.controller;
 import com.example.consultorioApp.dto.request.odontologo.OdontologoEntradaDTO;
 import com.example.consultorioApp.dto.request.update.OdontologoActualizadoEntradaDTO;
 import com.example.consultorioApp.dto.response.odontologo.OdontologoSalidaDTO;
+import com.example.consultorioApp.exception.BadRequestException;
+import com.example.consultorioApp.exception.ResourceNotFoundException;
 import com.example.consultorioApp.service.impl.OdontologoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/odontologos")
@@ -32,14 +33,14 @@ public class OdontologoController {
 
     // Metodo PUT que modifica un odontologo
     @PutMapping("actualizar")
-    public ResponseEntity<OdontologoSalidaDTO> actualizarOdontologo(@Valid @RequestBody OdontologoActualizadoEntradaDTO odontologo) {
+    public ResponseEntity<OdontologoSalidaDTO> actualizarOdontologo(@Valid @RequestBody OdontologoActualizadoEntradaDTO odontologo) throws BadRequestException {
         return new ResponseEntity<>(odontologoService.actualizarOdontologo(odontologo), HttpStatus.OK);
 
     }
 
     // Metodo GET que busca un odontologo por id
     @GetMapping("/{id}")
-    public ResponseEntity<OdontologoSalidaDTO> buscarOdontologo(@PathVariable Long id) {
+    public ResponseEntity<OdontologoSalidaDTO> buscarOdontologo(@PathVariable Long id) throws BadRequestException {
         return new ResponseEntity<>(odontologoService.buscarOdontologo(id), HttpStatus.OK);
     }
 
@@ -51,7 +52,7 @@ public class OdontologoController {
 
     // Metodo DELETE para eliminar un odontologo por id
     @DeleteMapping("eliminar/{id}")
-    public ResponseEntity<Void> eliminarOdontologo(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarOdontologo(@PathVariable Long id) throws ResourceNotFoundException {
         odontologoService.eliminarOdontologo(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

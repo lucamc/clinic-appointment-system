@@ -4,6 +4,7 @@ package com.example.consultorioApp.service.impl;
 import com.example.consultorioApp.dto.request.paciente.PacienteEntradaDTO;
 import com.example.consultorioApp.dto.request.update.PacienteActualizadoEntradaDTO;
 import com.example.consultorioApp.dto.response.paciente.PacienteSalidaDTO;
+import com.example.consultorioApp.exception.BadRequestException;
 import com.example.consultorioApp.exception.ResourceNotFoundException;
 import com.example.consultorioApp.model.Paciente;
 import com.example.consultorioApp.repository.IPacienteRepository;
@@ -40,11 +41,10 @@ public class PacienteService implements IPacienteService {
     }
 
     @Override
-    public PacienteSalidaDTO actualizarPaciente(PacienteActualizadoEntradaDTO paciente) {
+    public PacienteSalidaDTO actualizarPaciente(PacienteActualizadoEntradaDTO paciente) throws BadRequestException {
         // Busca el paciente y lanza una excepción si no se encuentra
         Paciente pacienteActualizar = pacienteRepository.findById(paciente.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el paciente con id: " + paciente.getId()));
-
+                .orElseThrow(() -> new BadRequestException("No se encontro el paciente con id: " + paciente.getId()));
         // Actualiza y guarda el paciente
         Paciente pacienteActualizado = dtoActualizadoAEntidad(paciente);
         pacienteRepository.save(pacienteActualizado);
@@ -53,9 +53,9 @@ public class PacienteService implements IPacienteService {
         return entidadAdtoSalida(pacienteActualizado);
     }
 
-    public PacienteSalidaDTO buscarPaciente(Long id) {
+    public PacienteSalidaDTO buscarPaciente(Long id) throws BadRequestException{
         Paciente paciente = pacienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el paciente con id: " + id));
+                .orElseThrow(() -> new BadRequestException("No se encontro el paciente con id: " + id));
         return entidadAdtoSalida(paciente);
     }
 
@@ -66,7 +66,7 @@ public class PacienteService implements IPacienteService {
     }
 
     @Override
-    public void eliminarPaciente(Long id) {
+    public void eliminarPaciente(Long id) throws ResourceNotFoundException {
         Optional<Paciente> paciente = pacienteRepository.findById(id);
         if (paciente.isEmpty()) {
             throw new ResourceNotFoundException("No se encontro el paciente con id: " + id);
@@ -99,10 +99,6 @@ public class PacienteService implements IPacienteService {
 
     public Paciente dtoActualizadoAEntidad(PacienteActualizadoEntradaDTO paciente) {
         return modelMapper.map(paciente, Paciente.class);
-    }
-
-    public Paciente convertirADTOAEntidad(PacienteSalidaDTO pacienteDTO) {
-        return modelMapper.map(pacienteDTO, Paciente.class);
     }
 
 }
