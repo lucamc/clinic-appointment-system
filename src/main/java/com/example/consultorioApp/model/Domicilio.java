@@ -11,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "DOMICILIOS")
 public class Domicilio {
 
     @Id

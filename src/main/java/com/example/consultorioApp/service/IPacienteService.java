@@ -1,17 +1,21 @@
 package com.example.consultorioApp.service;
 
+import com.example.consultorioApp.dto.request.paciente.PacienteEntradaDTO;
+import com.example.consultorioApp.dto.request.update.PacienteActualizadoEntradaDTO;
+import com.example.consultorioApp.dto.response.paciente.PacienteSalidaDTO;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface IPacienteService {
 
-    PacienteDTO registrarPaciente(PacienteDTO pacienteDTO);
+    PacienteSalidaDTO registrarPaciente(PacienteEntradaDTO paciente);
 
-    PacienteDTO actualizarPaciente(PacienteDTO pacienteActualizadoDTO);
+    PacienteSalidaDTO actualizarPaciente(PacienteActualizadoEntradaDTO paciente);
 
-    Optional<PacienteDTO> buscarPaciente(Long id);
+    PacienteSalidaDTO buscarPaciente(Long id);
 
-    List<PacienteDTO> listarPacientes();
+    List<PacienteSalidaDTO> listarPacientes();
 
     void eliminarPaciente(Long id);
 }

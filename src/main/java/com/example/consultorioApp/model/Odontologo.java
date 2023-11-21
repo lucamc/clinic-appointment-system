@@ -14,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "ODONTOLOGOS")
 public class Odontologo {
 
     //Attributes
@@ -26,9 +27,6 @@ public class Odontologo {
     private String apellido;
 
     private String matricula;
-
-    @OneToMany(mappedBy = "odontologo", fetch = FetchType.LAZY)
-    private Set<Turno> turnos = new HashSet<>();
 
     // Constructor
     public Odontologo(String nombre, String apellido, String matricula) {

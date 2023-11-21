@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Getter
@@ -18,10 +15,12 @@ public class PacienteEntradaDTO {
 
     // Atributos
 
+    @Size(max = 50, message = "El nombre no puede tener mas de 50 caracteres")
     @NotNull(message = "El nombre no puede ser nulo")
     @NotBlank(message = "Especificar el nombre")
     private String nombre;
 
+    @Size(max = 50, message = "El apellido no puede tener mas de 50 caracteres")
     @NotNull(message = "El apellido no puede ser nulo")
     @NotBlank(message = "Especificar el apellido")
     private String apellido;
@@ -32,7 +31,7 @@ public class PacienteEntradaDTO {
 
     @NotNull(message = "La fecha de ingreso no puede ser nulo")
     @FutureOrPresent(message = "La fecha de ingreso debe ser presente o futura")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate fechaIngreso;
 
     @NotNull(message = "El domicilio no puede ser nulo")

@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -13,10 +14,12 @@ import javax.validation.constraints.NotNull;
 public class OdontologoEntradaDTO {
 
     // Atributos
+    @Size(max = 50, message = "El nombre no puede tener mas de 50 caracteres")
     @NotNull(message = "El nombre no puede ser nulo")
     @NotBlank(message = "Especificar el nombre")
     private String nombre;
 
+    @Size(max = 50, message = "El apellido no puede tener mas de 50 caracteres")
     @NotNull(message = "El apellido no puede ser nulo")
     @NotBlank(message = "Especificar el apellido")
     private String apellido;

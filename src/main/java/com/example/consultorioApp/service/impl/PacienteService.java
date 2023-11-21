@@ -1,10 +1,14 @@
 package com.example.consultorioApp.service.impl;
 
 
+import com.example.consultorioApp.dto.request.paciente.PacienteEntradaDTO;
+import com.example.consultorioApp.dto.request.update.PacienteActualizadoEntradaDTO;
+import com.example.consultorioApp.dto.response.paciente.PacienteSalidaDTO;
 import com.example.consultorioApp.exception.ResourceNotFoundException;
 import com.example.consultorioApp.model.Paciente;
 import com.example.consultorioApp.repository.IPacienteRepository;
 import com.example.consultorioApp.service.IPacienteService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,85 +20,89 @@ public class PacienteService implements IPacienteService {
 
     private final IPacienteRepository pacienteRepository;
 
+    private final ModelMapper modelMapper;
+
     @Autowired
-    public PacienteService(IPacienteRepository pacienteRepository) {
+    public PacienteService(IPacienteRepository pacienteRepository, ModelMapper modelMapper) {
         this.pacienteRepository = pacienteRepository;
+        this.modelMapper = modelMapper;
+        configureMapping();
     }
 
     @Override
-    public PacienteDTO registrarPaciente(PacienteDTO pacienteDTO) {
-        Paciente paciente = convertirEntidad(pacienteDTO);
-        Paciente nuevoPaciente = pacienteRepository.save(paciente);
-        return convertirADTO(nuevoPaciente);
+    public PacienteSalidaDTO registrarPaciente(PacienteEntradaDTO paciente) {
+        // Convierte el DTO de entrada a una entidad
+        Paciente pacienteIngresado = dtoEntradaAEntidad(paciente);
+
+        // Guarda la entidad en la base de datos
+        Paciente pacienteRegistrado = pacienteRepository.save(pacienteIngresado);
+        return entidadAdtoSalida(pacienteRegistrado);
     }
 
     @Override
-    public PacienteDTO actualizarPaciente(PacienteDTO pacienteActualizadoDTO) {
-        Paciente pacienteExistente = pacienteRepository.findById(pacienteActualizadoDTO.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
-        pacienteExistente.setNombre(pacienteActualizadoDTO.getNombre());
-        pacienteExistente.setApellido(pacienteActualizadoDTO.getApellido());
-        pacienteExistente.setDni(pacienteActualizadoDTO.getDni());
-        pacienteExistente.setFechaIngreso(pacienteActualizadoDTO.getFechaIngreso());
-        pacienteExistente.setDomicilio(DomicilioDTO.convertirEntidad(pacienteActualizadoDTO.getDomicilio()));
-        pacienteRepository.save(pacienteExistente);
-        return convertirADTO(pacienteExistente);
+    public PacienteSalidaDTO actualizarPaciente(PacienteActualizadoEntradaDTO paciente) {
+        // Busca el paciente y lanza una excepción si no se encuentra
+        Paciente pacienteActualizar = pacienteRepository.findById(paciente.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el paciente con id: " + paciente.getId()));
+
+        // Actualiza y guarda el paciente
+        Paciente pacienteActualizado = dtoActualizadoAEntidad(paciente);
+        pacienteRepository.save(pacienteActualizado);
+
+        // Convierte el paciente actualizado a DTO y lo retorna
+        return entidadAdtoSalida(pacienteActualizado);
+    }
+
+    public PacienteSalidaDTO buscarPaciente(Long id) {
+        Paciente paciente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el paciente con id: " + id));
+        return entidadAdtoSalida(paciente);
     }
 
     @Override
-    public Optional<PacienteDTO> buscarPaciente(Long id) {
-        Optional<Paciente> paciente = Optional.ofNullable(pacienteRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Paciente no encontrado")));
-        return paciente.map(this::convertirADTO);
-    }
-
-    @Override
-    public List<PacienteDTO> listarPacientes() {
+    public List<PacienteSalidaDTO> listarPacientes() {
         List<Paciente> pacientes = pacienteRepository.findAll();
-        return pacientes.stream()
-                .map(this::convertirADTO)
-                .collect(java.util.stream.Collectors.toList());
+        return pacientes.stream().map(this::entidadAdtoSalida).toList();
     }
 
     @Override
     public void eliminarPaciente(Long id) {
-        pacienteRepository.findById(id).orElseThrow(()
-                -> new ResourceNotFoundException("Paciente no encontrado"));
+        Optional<Paciente> paciente = pacienteRepository.findById(id);
+        if (paciente.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontro el paciente con id: " + id);
+        }
         pacienteRepository.deleteById(id);
     }
 
+    public void configureMapping() {
+        // Mapeo de PacienteEntradaDTO a Paciente
+        modelMapper.createTypeMap(PacienteEntradaDTO.class, Paciente.class)
+                .addMappings(mapper -> mapper.map(PacienteEntradaDTO::getDomicilio, Paciente::setDomicilio));
 
-    private PacienteDTO convertirADTO(Paciente paciente) {
-        PacienteDTO pacienteDTO = new PacienteDTO();
-        pacienteDTO.setId(paciente.getId());
-        pacienteDTO.setNombre(paciente.getNombre());
-        pacienteDTO.setApellido(paciente.getApellido());
-        pacienteDTO.setDni(paciente.getDni());
-        pacienteDTO.setFechaIngreso(paciente.getFechaIngreso());
+        // Mapeo de Paciente a PacienteSalidaDTO
+        modelMapper.createTypeMap(Paciente.class, PacienteSalidaDTO.class)
+                .addMappings(mapper -> mapper.map(Paciente::getDomicilio, PacienteSalidaDTO::setDomicilio));
 
-        // Convierte el Domicilio a un DomicilioDTO (si el paciente tiene domicilio)
-        if (paciente.getDomicilio() != null) {
-            pacienteDTO.setDomicilio(DomicilioDTO.convertirADTO(paciente.getDomicilio()));
-        }
-
-        return pacienteDTO;
+        // Mapeo de PacienteActualizadoEntradaDTO a Paciente
+        modelMapper.createTypeMap(PacienteActualizadoEntradaDTO.class, Paciente.class)
+                .addMappings(mapper -> mapper.map(PacienteActualizadoEntradaDTO::getDomicilio, Paciente::setDomicilio));
     }
 
 
-    private Paciente convertirEntidad(PacienteDTO pacienteDTO) {
-        Paciente paciente = new Paciente();
-        paciente.setNombre(pacienteDTO.getNombre());
-        paciente.setApellido(pacienteDTO.getApellido());
-        paciente.setDni(pacienteDTO.getDni());
-        paciente.setFechaIngreso(pacienteDTO.getFechaIngreso());
-
-        if (pacienteDTO.getDomicilio() != null) {
-            // Convierte el DomicilioDTO a Domicilio
-            paciente.setDomicilio(DomicilioDTO.convertirEntidad(pacienteDTO.getDomicilio()));
-        }
-
-        return paciente;
+    public Paciente dtoEntradaAEntidad(PacienteEntradaDTO paciente) {
+        return modelMapper.map(paciente, Paciente.class);
     }
 
+    public PacienteSalidaDTO entidadAdtoSalida(Paciente paciente) {
+        return modelMapper.map(paciente, PacienteSalidaDTO.class);
+    }
+
+    public Paciente dtoActualizadoAEntidad(PacienteActualizadoEntradaDTO paciente) {
+        return modelMapper.map(paciente, Paciente.class);
+    }
+
+    public Paciente convertirADTOAEntidad(PacienteSalidaDTO pacienteDTO) {
+        return modelMapper.map(pacienteDTO, Paciente.class);
+    }
 
 }

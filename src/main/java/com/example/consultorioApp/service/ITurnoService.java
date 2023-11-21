@@ -1,21 +1,23 @@
 package com.example.consultorioApp.service;
 
-import com.example.consultorioApp.model.Turno;
 
-import javax.swing.text.html.Option;
+import com.example.consultorioApp.dto.request.turno.TurnoEntradaDTO;
+import com.example.consultorioApp.dto.request.update.TurnoActualizadoEntradaDTO;
+import com.example.consultorioApp.dto.response.turno.TurnoSalidaDTO;
+
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 public interface ITurnoService {
 
-    Turno registrarTurno(Turno turno);
+    TurnoSalidaDTO registrarTurno(TurnoEntradaDTO turnoEntradaDto);
 
-    Turno actualizarTurno(Turno turnoActualizado);
+    TurnoSalidaDTO actualizarTurno(TurnoActualizadoEntradaDTO turnoEntradaDto);
 
-    Optional<Turno> buscarTurno(Long id);
+    TurnoSalidaDTO buscarTurnoPorId(Long id);
 
-    List<Turno> listarTurnos();
+    List<TurnoSalidaDTO> listarTurnos();
 
     void eliminarTurno(Long id);
+
+
 }

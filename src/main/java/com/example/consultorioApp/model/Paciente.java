@@ -15,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "PACIENTES")
 public class Paciente {
 
     // Attributes
@@ -35,8 +36,6 @@ public class Paciente {
     @Column(name ="fecha_ingreso")
     private LocalDate fechaIngreso;
 
-    @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY)
-    private Set<Turno> turnos = new HashSet<>();
 
     // Constructor
     public Paciente(String nombre, String apellido, Domicilio domicilio, String dni, LocalDate fechaIngreso) {
